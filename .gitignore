@@ -1,0 +1,5 @@
+*.exe
+ref_files/
+latex/
+html/
+src/ast_to_st.txt

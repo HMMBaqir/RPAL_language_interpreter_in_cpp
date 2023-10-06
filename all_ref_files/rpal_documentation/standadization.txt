@@ -1,0 +1,150 @@
+Every inner node is either gamma (which applies left side function to right side expression  (application of function))
+or lambda which defines the left side variable as the right side parameter (gamma can take lambda as a function which defines variablele as parameter in the right side expression of gamma node)
+
+
+
+
+let ast to st 
+
+     let        =>    gamma           
+    /  \             /     \                
+   =    P           lambda  E             
+  / \               /  \                     
+ X   E             X    P   
+                  
+
+
+where ast to st
+   where            =>      gamma
+  /    \                    /   \
+ P      =                lambda  E
+       / \                /  \
+      X   E              X    P
+
+within ast to st
+   within                =>           =                
+   /     \                           / \                      
+  =       =                        X2   gamma 
+ / \     / \                            /   \                  
+Xl  El  X2 E2                       lambda   El        
+                                      /  \                           
+                                    Xl   E2 
+
+
+fcn_form ast to st 
+
+   fcn_form           =>                    =                
+   /   |   \                              /   \                     
+  P    V+   E                            P   +lambda            
+                                              /   \                        
+                                             V    .E                         
+
+
+-> (conditional node) ast to st ( note Cond is a special function identifier that is used here)
+
+    —>             =>        gamma
+  / | \                     /    \
+ B  T  E                  gamma  nil
+                         /     \
+                      gamma    lambda
+                      /   \        /  \
+                    gamma lambda  ()   E
+                    / \     / \
+                  Cond B   ()  T
+
+
+
+
+tau (tuples) node ast to st
+
+tau          =>       ++gamma              
+ |                       / \                     
+E++                    gamma E                   
+                        / \ 
+                      aug .nil 
+                     
+ neg ast to st 
+
+neg      =>      gamma                              
+ |                /  \                    
+ E              neg   E  
+
+
+ rec (recursive function definition) node ast to st (note Ystar a special function identifier that is used here)  
+
+  rec     =>     =
+  / \           /  \
+ X   E         X   gamma
+                   /    \
+                Ystar   lambda    
+                        /   \
+                       X     E
+          
+ 
+, (comma) node transformed from ast to st
+
+     lambda        =>       lambda
+     /   \                  /    \
+    ,     E               Temp  ++gamma
+  /  \                         /      \ 
+ X++  i                      lambda  gamma
+                            /  \     /   \
+                          X.i  .E  Temp  <INTEGER:i>
+                                        
+
+not from ast to st
+
+not      =>       gamma          
+ |                 / \        
+ E                not E    
+
+lambda with multiple variables (children in the ast) from ast to st                  
+
+lambda =>   ++lambda                                   
+ /   \         /  \                       
+V++   E       V   .E                    
+                              
+
+and node transformed from ast to tree with , (comma) , tau and = (assign) node , these nodes will be standardized later
+
+   and         =>           =            
+    |                     /   \  
+   =++                   ,    tau                      
+   / \                   |     |            
+  X   E                 X++    E++                 
+                                                 
+  and                                               =
+   |                              =>                |
+   =   -->   =   -->   =                            ,     ------->     tau
+   |         |         |                            |                   |
+   x -> E    x -> E    x  ->E                       x1 -> x2 -> x3      e1 -> e2 -> e3
+
+
+@ /  (infix) / AT node (this takes the second element as a function and applies E1 as first parameter and E2 as second parameter  )
+
+    AT            =>          gamma
+   / | \                     /    \
+ El  N  E2                 gamma  E2
+                           / \
+                          N   El
+
+Op(binary operator) from ast to st
+
+  Op       =>      gamma
+ /  \              /   \
+El  E2          gamma   E2
+                 /  \
+               Op   El
+
+
+
+Unary operator ( negation or boolean not) ast to st
+
+Uop  =>   gamma                  
+ |        /   \                    
+ E       Uop   E      
+
+Uop and Op defined
+ Uop in [not, neg]
+ Op in [aug,or,&,+,—,/,**,gr,ge,ls,le,eq,ne]
+
